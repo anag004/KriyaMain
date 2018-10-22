@@ -1,0 +1,15 @@
+The following commands are available in this interface:
+
+1. create: Create new VMs
+2. start: Power on an existing VM
+3. connect: Open up a terminal into a running VM
+4. shutdown: force shutdown the VM
+5. suspend: Pause the VM
+6. resume: Resume a paused VM
+7. close: Shutdown KRIYA
+8. listvms: Lists all VMs and their states
+9. destroy: Completely deletes a VM
+
+Enter the number of the command to get more information on its syntax and usage. 
+
+Type exit to go back to inputting commands. 

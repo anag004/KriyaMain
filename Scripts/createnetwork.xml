@@ -1,0 +1,10 @@
+<network>
+  <name>bridgenetwork</name>
+  <uuid>97ce3914-231e-4026-0a78-822e1e2e7226</uuid>
+  <forward mode='route' />
+  <bridge name='virbr0' stp='on' delay='0' />
+  <ip address='192.168.122.1' netmask='255.255.255.0'>
+  </ip>
+</network>
+
+<!-- run using 'virsh net-create <location of file>'-->
