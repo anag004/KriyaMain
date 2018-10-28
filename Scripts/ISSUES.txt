@@ -1,0 +1,2 @@
+1. If a function does not produce an output in comm.py then the script stops. 
+2. No way to terminate actions from inside comm.py

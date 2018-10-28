@@ -64,25 +64,25 @@ def findipaddr(vmRAM):
 	# return False
 
 	# Define it temporarily to be some convenient IP for testing purposes
-	# return "10.194.2.145"
+	return "10.194.2.145"
 
-	print("Find IP request initiated...")
-	print("Calling the executor script...")
-	# Call the script which searches for IPs
-	x = subprocess.check_output(['bash', 'findavailableuser.sh', str(vmRAM)])
-	print(vmRAM)
-	x = x.split("\n")
-	print("Iterating over the message values...")
-	for msg in x:
-		parsed = msg.split(" ")
-		if (parsed[0] == "NCONFIG"):
-			print("SYS ERR: Machine with IP " + parsed[1] + " does not have disa_server installed. Please check.")
-		elif (parsed[0] == "BUSY"):
-			print("SYS ERR: Resources busy")
-			return None
-		elif (parsed[0] == "FOUND"):
-			print("Free host found. Exiting findIP subroutine...")
-			return parsed[1]
+	# print("Find IP request initiated...")
+	# print("Calling the executor script...")
+	# # Call the script which searches for IPs
+	# x = subprocess.check_output(['bash', 'findavailableuser.sh', str(vmRAM)])
+	# print(vmRAM)
+	# x = x.split("\n")
+	# print("Iterating over the message values...")
+	# for msg in x:
+	# 	parsed = msg.split(" ")
+	# 	if (parsed[0] == "NCONFIG"):
+	# 		print("SYS ERR: Machine with IP " + parsed[1] + " does not have disa_server installed. Please check.")
+	# 	elif (parsed[0] == "BUSY"):
+	# 		print("SYS ERR: Resources busy")
+	# 		return None
+	# 	elif (parsed[0] == "FOUND"):
+	# 		print("Free host found. Exiting findIP subroutine...")
+	# 		return parsed[1]
 
 
 def isInteger(s):
@@ -248,6 +248,12 @@ def create(cmdwords, c):
 	else:
 		return 
 
+def ipNotFound(ipstring):
+	if (ipstring == "" or ipstring == " " or ipstring == "\n" or ipstring == "\r" or ipstring == None or len(ipstring) <= 3):
+		return True
+	else:
+		return False
+	
 def start(cmdwords, c):
 	#Check the cmdwords has one arguments
 	print("Start request initiated...")
@@ -279,27 +285,30 @@ def start(cmdwords, c):
 		subprocess.call(['bash', 'CommandExecutors/start.sh', vmName, hostIPs[vmId], ipaddr])
 		print("Searching for the IP address...")
 		sleeptime = 0.1
-		while vmIPs[vmId] == None and sleeptime <= 4:
+
+		while ((ipNotFound(vmIPs[vmId])) and sleeptime <= 4):
 			# Keep trying until you get the IP address
+			print("Calling the return ip subroutine...")
 			vmIPs[vmId] = subprocess.check_output(['bash', 'returnip.sh', vmName, hostIPs[vmId], ipaddr])
 			time.sleep(sleeptime)
 			sleeptime *= 2
 			print("HALTING")
 
-		if (vmIPs[vmId] == ""):
-			c.send("ERROR: The virtual machine test has started but not been assigned an IP yet. This usually means that the host is too slow to respond.")
+		if (ipNotFound(vmIPs[vmId])):
+			c.send("Virtual machine started.\nERROR: The virtual machine test has started but not been assigned an IP yet. This usually means that the host is too slow to respond.")
 			print("SYS ERROR: Host too slow to start VM")
 			return 
 		else:
 			vmStates[vmId] = 1
 			print("Start request successful")
-			c.send(vmName + " is running. Virtual machine has ip address " + str(vmIPs[vmId]) + "\n")
+			c.send(vmName + " is running. Virtual machine has ip address " + vmIPs[vmId])
 			print("Exiting start subroutine...")
 			return
 	except:
 		print("SYS ERROR: Could not start VM")
 		c.send("Error - test was not able to start.")
-	
+
+
 
 def connect(cmdwords, c):
 	print("Connect request initiated...")
@@ -328,7 +337,7 @@ def connect(cmdwords, c):
 		return 
 
 # Switches off a VM
-def shutdown(cmdwords, c):
+def shutdown(cmdwords, c, printOutput):
 	print("Shutdown request initiated...")
 	if (checkArgNumber(cmdwords, 1, c) == False): 
 		return 
@@ -353,7 +362,8 @@ def shutdown(cmdwords, c):
 	print("Calling the shutdown executor script...")
 	subprocess.call(['bash', 'CommandExecutors/shutdown.sh', vmName+"_"+ipaddr, hostIPs[vmId]])
 	vmStates[vmId] = 0
-	c.send(vmName + " is now off\n")
+	if (printOutput):
+		c.send(vmName + " is now off\n")
 	print("Shutdown successful.")
 
 def suspend(cmdwords, c):
@@ -378,7 +388,7 @@ def suspend(cmdwords, c):
 	vmStates[vmId] = 2 #Set the state to paused
 	return
 
-def resume(cmdwords, c):
+def resume(cmdwords, c, printOutput):
 	if (checkArgNumber(cmdwords, 1, c) == False): 
 		return 
 
@@ -386,8 +396,8 @@ def resume(cmdwords, c):
 
 	# Check if the vmName exists in the vmName array
 	if (vmName not in vmNames):
-		c.send("The virtual machine named " + vmName + " does not exist.\n")
-		return
+			c.send("The virtual machine named " + vmName + " does not exist.\n")
+			return
 	
 	# Else find the Id of the virtual machine
 	vmId = vmNames.index(vmName)
@@ -400,7 +410,7 @@ def resume(cmdwords, c):
 	vmStates[vmId] = 1 #Set the state to running
 
 # This script completely removes the VM
-def destroy(cmdwords, c):
+def destroy(cmdwords, c, printOutput):
 	print("Destroy request initiated...")
 
 	# Check the arguments 
@@ -432,7 +442,8 @@ def destroy(cmdwords, c):
 	vmIPs.pop(vmId)
 	hostIPs.pop(vmId)
 	vmStates.pop(vmId)
-	c.send("VM " + vmName + " removed.")
+	if (printOutput):
+		c.send("VM " + vmName + " removed.")
 	print("Deletion successful.")
 
 def close(cmdwords, c):
@@ -441,11 +452,11 @@ def close(cmdwords, c):
 
 	#Shutdown then destroy all VMs
 	while(len(vmStates) > 0):
-		if (vmStates[i] != 0):
+		if (vmStates[0] != 0):
 			if (vmStates[0] == 2):
-				resume(["resume", vmNames[i]], c)
-			shutdown(["shutdown", vmNames[i]], c)
-		destroy(["destroy", vmNames[i]], c)
+				resume(["resume", vmNames[0]], c, False)
+			shutdown(["shutdown", vmNames[0]], c, False)
+		destroy(["destroy", vmNames[0]], c, False)
 
 
 	# Send a closing message to the user to terminate the script
@@ -453,17 +464,22 @@ def close(cmdwords, c):
 	return
 
 def listvms(cmdwords, c):
+	outputString = ""
+
 	if (checkArgNumber(cmdwords, 0, c) == False):
 		return
 
 	for i in range(len(vmStates)):
-		c.send(str(i+1) + ". " + vmNames[i] + " ")
+		outputString += str(i+1) + ". " + vmNames[i] + " "
 		if (vmStates[i] == 0):
-			c.send("off\n")
+			outputString += "off"
 		elif (vmStates[i] == 1):
-			c.send("running\n")
+			outputString += "running"
 		elif (vmStates[i] == 2):
-			c.send("paused\n")
+			outputString += "paused"
+
+	outputString += "\n"
+	c.send(outputString)
 
 #This is the main loop that the server runs all the time
 while True:
@@ -483,25 +499,31 @@ while True:
 			if (cmdwords[0] == "help"):
 				help(c)
 			elif (cmdwords[0] == "create"):
-				print("CREATE SCRIPT PASS")
 				create(cmdwords, c)
 			elif (cmdwords[0] == "start"):
 				start(cmdwords, c)
 			elif (cmdwords[0] == "connect"):
 				connect(cmdwords, c)
 			elif (cmdwords[0] == "shutdown"):
-				shutdown(cmdwords, c)
+				shutdown(cmdwords, c, True)
 			elif (cmdwords[0] == "suspend"):
 				suspend(cmdwords, c)
 			elif (cmdwords[0] == "resume"):
-				resume(cmdwords, c)
+				resume(cmdwords, c, True)
 			elif (cmdwords[0] == "close"):
 				close(cmdwords, c)
+				c.close()
 				exit()
 			elif (cmdwords[0] == "listvms"):
 				listvms(cmdwords, c)
 			elif(cmdwords[0] == "destroy"):
-				destroy(cmdwords, c)
+				destroy(cmdwords, c, True)
+			elif (cmdwords[0] == "fstart"):
+				vmStates[vmNames.index(cmdwords[1])] = 1
+			elif (cmdwords[0] == "fcreate"):
+				vmNames.append(cmdwords[1])
+				vmIPs.append(None)
+				vmStates.append(0)
 			else:
 				c.send("ERROR: Command " + cmdwords[0] + " does not exist.\n")
 		c.close()
