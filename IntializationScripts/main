@@ -1,3 +1,0 @@
-#!/bin/bash
-
-ncat -k --listen -p 6000 | grep myname
