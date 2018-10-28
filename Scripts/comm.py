@@ -23,9 +23,6 @@ import time
 
 print("NEW CONNECTION CREATED")
 
-# This is a list IP addresses of all available hosts on the network  
-allIPs = []
-
 # The port on which the current script is listening
 port = int(sys.argv[1])
 
@@ -73,6 +70,7 @@ def findipaddr(vmRAM):
 	print("Calling the executor script...")
 	# Call the script which searches for IPs
 	x = subprocess.check_output(['bash', 'findavailableuser.sh', str(vmRAM)])
+	print(vmRAM)
 	x = x.split("\n")
 	print("Iterating over the message values...")
 	for msg in x:
@@ -288,7 +286,7 @@ def start(cmdwords, c):
 			sleeptime *= 2
 			print("HALTING")
 
-		if (vmIPs[vmId] == None):
+		if (vmIPs[vmId] == ""):
 			c.send("ERROR: The virtual machine test has started but not been assigned an IP yet. This usually means that the host is too slow to respond.")
 			print("SYS ERROR: Host too slow to start VM")
 			return 

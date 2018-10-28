@@ -25,6 +25,7 @@ sudo sed -i -e "s/\(<name>\).*/\1$vmName<\/name>/" \
 #Copying and resizing the hard-disk
 echo "Copying the hard-disk"
 sudo cp "/home/disa_server/kvm-pool/$vmCore.qcow2" "/home/disa_server/kvm-pool/$vmName.qcow2"
+chmod 777 "/home/disa_server/kvm-pool/$vmName.qcow2"
 diskSize="$3"
 if [ "$diskSize" = "" -o "$diskSize" = "5G" ]
 then

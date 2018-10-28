@@ -9,10 +9,13 @@ do
     val=$(sshpass -p 'asdf' ssh -q -t disa_server@"$i" 'bash $HOME/checkfree.sh' $ram)
     compare=$( echo $'1\r' )
     if [ "$val" == "$compare" ]; then
-    echo "FOUND $i"; exit 1
+    echo "FOUND $i"; exit 0
     # exit the script, return the ip
+
+    # These lines return non configured machines
     elif [ "$val" == "" ]; then
             echo "NCONFIG $i"
+
     fi
 done
 
