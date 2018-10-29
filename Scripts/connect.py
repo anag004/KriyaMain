@@ -7,7 +7,8 @@ import subprocess
 import time
 
 # Colors
-CRED = '\033[91m'
+CRED = '\33[91m'
+CBLUE = '\33[94m'
 CEND = '\033[0m'
 
 serverip = sys.argv[1]
@@ -82,8 +83,13 @@ def parseIP(ip):
 			break
 	return resultIP
 
+# Keeps track of if we are in the help mode
+helpMode = False
 while(True):
-	command = raw_input(CRED + "KRIYA >> " + CEND)
+	if (helpMode):
+		command = raw_input(CRED + "KRIYA " + CBLUE + "[HELP] >> " + CEND)
+	else:
+		command = raw_input(CRED + "KRIYA >> " + CEND)
 	sock.send(command)
 	recvData = sock.recv(2**15)
 	if (recvData == "KRIYA shutdown..."):
@@ -91,6 +97,12 @@ while(True):
 	elif (recvData.split(" ")[0] == "CONNECT"):
 		splitted = recvData.split(" ")
 		subprocess.call(['bash', 'CommandExecutors/connect.sh', splitted[1], splitted[2], splitted[3], parseIP(splitted[4])])
+	elif(recvData.split(" ")[0] == "HELP"):
+		helpMode = True
+		print(recvData)
+	elif(recvData.split(" ")[0] == "Exited" and recvData.split(" ")[1] == "help"):
+		helpMode = False
+		print(recvData)
 	else:
 		print(recvData)
 

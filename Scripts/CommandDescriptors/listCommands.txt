@@ -1,3 +1,4 @@
+HELP MODE
 The following commands are available in this interface:
 
 1. create: Create new VMs
