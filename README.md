@@ -1,5 +1,8 @@
 # KriyaSem3
 The awesomest project ever
+
+## Branch Purpose: Adding migration feature. Half done
+
 ### Some Issues
 1. If a function does not produce an output in comm.py then the script stops. 
 2. No way to terminate actions from inside comm.py
@@ -8,3 +11,4 @@ The awesomest project ever
 5. Enable the option of migration script depending upon RAM
 6. **solved** Fix returnip.sh
 7. Merging with the tailored files.
+
