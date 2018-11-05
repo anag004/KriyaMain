@@ -207,7 +207,7 @@ def checkVmDisk(vmDisk, c):
 	return True
 
 # Updates the states of the virtual machine by calling virsh list -all
-def updateStates():
+# def updateStates():
 	
 
 def create(cmdwords, c):
