@@ -206,6 +206,7 @@ def checkVmDisk(vmDisk, c):
 
 	return True
 
+<<<<<<< HEAD
 
 # # Checks the remote state of a virtual machine with the given name, returns the remote state
 # def checkState(queryName):
@@ -240,6 +241,11 @@ def checkVmDisk(vmDisk, c):
 # 					if (vmStates == )
 
 
+=======
+# Updates the states of the virtual machine by calling virsh list -all
+# def updateStates():
+	
+>>>>>>> 93a66cee5700195b2dd74e04323a1e456fa2ffc0
 
 def create(cmdwords, c):
 	print("Create request initiated...")
