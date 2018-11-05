@@ -6,6 +6,6 @@
 
 echo "Connecting to remote host..." 
 
-ssh -t disa_server@$4 "sudo bash /home/dhull/DISA/Scripts/CommandExecutors/local/create.sh \"$1_$5\" \"$2\" \"$3\""
+ssh -t disa_server@$4 "sudo bash /home/disa_server/DISA/Scripts/CommandExecutors/local/create.sh \"$1_$5\" \"$2\" \"$3\""
 
 echo 1
