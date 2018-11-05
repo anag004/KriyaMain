@@ -1,7 +1,0 @@
-1. If a function does not produce an output in comm.py then the script stops. 
-2. No way to terminate actions from inside comm.py
-3. Add [HELP] to the Kriya Environment (solved)
-4. Update the vm states based on virsh list --all
-5. Write the migrate script
-6. Fix returnip.sh
-

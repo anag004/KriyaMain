@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script resides on the guest. Takes in input as vmName, vmRam, vmDisk and creates a VM
-
+# set o -xtrace
 vmCore=core
 vmName="$1"
 diskSize="$3"
@@ -34,9 +34,17 @@ else
 	required=${diskSize%G*}
 	resize=$(( $required - 5 ))
 	sudo qemu-img resize -f raw "/home/disa_server/kvm-pool/$vmName.qcow2" +$resize"G"
-fi 
+fi
 
 # after all editing is done
 sudo virsh define createnewdisavm.xml
 echo "Eureka! $vmName created!"
+
 sudo rm -f createnewdisavm.xml # for removing file after creation
+
+# Activate this Script for enabling migration as well.
+# . /home/disa_server/DISA/Scripts/CommandExecutors/local/enoughSpace.sh "$vmName" "$ramSize" > ~disa_server/output.log 2>&1
+# disown -h $(bash /home/disa_server/DISA/Scripts/CommandExecutors/local/enoughSpace.sh "$vmName" "$ramSize") &
+# echo sth
+# exit 0 
+# echo $! > f.txt

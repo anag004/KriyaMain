@@ -7,4 +7,4 @@ The awesomest project ever
 4. Update the vm states based on virsh list --all
 5. Enable the option of migration script depending upon RAM
 6. **solved** Fix returnip.sh
-7. Merging with the tailored files.
+7. **solved** Merging with the tailored files.
