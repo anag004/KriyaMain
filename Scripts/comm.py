@@ -147,7 +147,7 @@ def help(c):
 def checkVmName(vmName, c):
 	# First check if all characters are alphanumeric
 	if (vmName.isalnum() == False):
-		c.send("The VM name should consist of alphanumeric characters only. No spaces or underscores allowed.\n")
+		c.send("The VM name should consist of alphanumeric characters only. No spaces or symbols allowed.\n")
 		return False
 
 	# Check if the vmName already does not occur in the vm list
@@ -206,9 +206,40 @@ def checkVmDisk(vmDisk, c):
 
 	return True
 
-# Updates the states of the virtual machine by calling virsh list -all
-def updateStates():
-	
+
+# # Checks the remote state of a virtual machine with the given name, returns the remote state
+# def checkState(queryName):
+# 	print("Checking state of " + queryName + "_" + ipaddr)
+
+# 	# Get the index of the virtual machine in the database
+# 	vmId = vmNames.index(queryName)
+
+# 	print("Fetching remote data from " + hostIPs[vmId] + "...")
+# 	remoteInfo = subprocess.check_output(['bash', 'CommandExecutors/getRemoveInfo.sh', hostIPs[vmId]]).split("\n")
+# 	for i in range(4, len(remoteInfo), 2):
+
+
+
+# # Updates the states of the virtual machine by calling virsh list -all
+# def checkStates(vmName):
+# 	print("Updating states from the host...")
+# 	print("Fetching remote VM information...")
+# 	for hostip in hostIPs:
+# 		# The hostip is needed to connect to it
+# 		# The ipaddr is needed to fetch virtual machines only belonging to one user
+# 		remoteInfo = subprocess.check_output(['bash', 'CommandExecutors/getRemoveInfo.sh', hostip])
+# 		remoteInfo.split("\n")
+# 		for i in range(4, len(remoteInfo), 2):
+# 			s  = remoteInfo[i]
+# 			remoteHostIp = s[len(s) - len(ipaddr):len(s)]
+# 			remoteVmName = s-remoteHostIp
+# 			if (remoteHostIp == ipaddr):
+# 				# Found the ip address
+# 				# Check the state
+# 				if (remoteInfo[i+1] == "running"):
+# 					if (vmStates == )
+
+
 
 def create(cmdwords, c):
 	print("Create request initiated...")
@@ -371,18 +402,24 @@ def shutdown(cmdwords, c, printOutput):
 	print("Shutdown successful.")
 
 def suspend(cmdwords, c):
+	print("Suspend request initiated...")
 	if (checkArgNumber(cmdwords, 1, c) == False): 
 		return 
 
 	vmName = cmdwords[1]
 
+	
+
 	# Check if the vmName exists in the vmName array
 	if (vmName not in vmNames):
 		c.send("The virtual machine named " + vmName + " does not exist.\n")
 		return
+
 	
+
 	# Else find the Id of the virtual machine
 	vmId = vmNames.index(vmName)
+	print("Located VM " + vmName + " in database with Id " + str(vmId))
 	vmState = vmStates[vmId]
 
 	if (vmState != 1):
@@ -454,14 +491,17 @@ def close(cmdwords, c):
 	if (checkArgNumber(cmdwords, 0, c) == False):
 		return
 
+	shuttime = 5 #Time it takes for the VM to shutdown
+
 	#Shutdown then destroy all VMs
 	while(len(vmStates) > 0):
 		if (vmStates[0] != 0):
 			if (vmStates[0] == 2):
 				resume(["resume", vmNames[0]], c, False)
 			shutdown(["shutdown", vmNames[0]], c, False)
+			time.sleep(shuttime)
 		destroy(["destroy", vmNames[0]], c, False)
-
+		# subprocess.call(['bash', 'CommandExecutors/close.sh', vmNames[0], hostIPs, ipaddr])
 
 	# Send a closing message to the user to terminate the script
 	c.send("KRIYA shutdown...")
@@ -527,7 +567,9 @@ while True:
 			elif (cmdwords[0] == "fcreate"):
 				vmNames.append(cmdwords[1])
 				vmIPs.append(None)
+				hostIPs.append(cmdwords[2])
 				vmStates.append(0)
+				c.send("Server database updated.")
 			else:
 				c.send("ERROR: Command " + cmdwords[0] + " does not exist.\n")
 		c.close()
