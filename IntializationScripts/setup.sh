@@ -30,7 +30,7 @@ virsh pool-autostart $vmName
 sudo qemu-img create -f raw /home/disa_server/kvm-pool/$vmName.qcow2 5G
 sudo rm -rf ~/.cache/virt-manager/
 virt-install --name=$vmName --ram 1024 --vcpu=1 -c ~/kvm-isos/ubuntu16-server-unattended-install.iso --os-type=linux --os-variant=generic --disk path=/home/disa_server/kvm-pool/$vmName.qcow2 --graphics spice --network bridge=virbr0
-sudo chmod 777 /home/disa_server/kvm-pool
+sudo chmod 755 /home/disa_server/kvm-pool
 
 # PROBLEMS::: ssh keys must be created
 # MANUAL COMMANDS:
