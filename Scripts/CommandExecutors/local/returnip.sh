@@ -4,7 +4,7 @@
 # First argument is the vmName second is the ip address
 
 vmName="$1"
-dump=$(virsh dumpxml $vmName | grep "mac addr")
+dump=$( virsh dumpxml $vmName | grep "mac addr" )
 mac=$(echo $dump | cut -f 2 -d "'")
 ip=$(arp -n | grep $mac | cut -f 1 -d " ")
 # echo abcd

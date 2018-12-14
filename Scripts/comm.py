@@ -64,25 +64,25 @@ def findipaddr(vmRAM):
 	# return False
 
 	# Define it temporarily to be some convenient IP for testing purposes
-	return "10.194.2.145"
+	# return "10.194.2.145"
 
-	# print("Find IP request initiated...")
-	# print("Calling the executor script...")
-	# # Call the script which searches for IPs
-	# x = subprocess.check_output(['bash', 'findavailableuser.sh', str(vmRAM)])
-	# print(vmRAM)
-	# x = x.split("\n")
-	# print("Iterating over the message values...")
-	# for msg in x:
-	# 	parsed = msg.split(" ")
-	# 	if (parsed[0] == "NCONFIG"):
-	# 		print("SYS ERR: Machine with IP " + parsed[1] + " does not have disa_server installed. Please check.")
-	# 	elif (parsed[0] == "BUSY"):
-	# 		print("SYS ERR: Resources busy")
-	# 		return None
-	# 	elif (parsed[0] == "FOUND"):
-	# 		print("Free host found. Exiting findIP subroutine...")
-	# 		return parsed[1]
+	print("Find IP request initiated...")
+	print("Calling the executor script...")
+	# Call the script which searches for IPs
+	x = subprocess.check_output(['bash', 'findavailableuser.sh', str(vmRAM)])
+	print(vmRAM)
+	x = x.split("\n")
+	print("Iterating over the message values...")
+	for msg in x:
+		parsed = msg.split(" ")
+		if (parsed[0] == "NCONFIG"):
+			print("SYS ERR: Machine with IP " + parsed[1] + " does not have disa_server installed. Please check.")
+		elif (parsed[0] == "BUSY"):
+			print("SYS ERR: Resources busy")
+			return None
+		elif (parsed[0] == "FOUND"):
+			print("Free host " + parsed[1] + " found. Exiting findIP subroutine...")
+			return parsed[1]
 
 
 def isInteger(s):
@@ -206,7 +206,7 @@ def checkVmDisk(vmDisk, c):
 
 	return True
 
-<<<<<<< HEAD
+
 
 # # Checks the remote state of a virtual machine with the given name, returns the remote state
 # def checkState(queryName):
@@ -241,11 +241,7 @@ def checkVmDisk(vmDisk, c):
 # 					if (vmStates == )
 
 
-=======
-# Updates the states of the virtual machine by calling virsh list -all
-# def updateStates():
-	
->>>>>>> 93a66cee5700195b2dd74e04323a1e456fa2ffc0
+
 
 def create(cmdwords, c):
 	print("Create request initiated...")
@@ -290,7 +286,7 @@ def create(cmdwords, c):
 		return 
 
 def ipNotFound(ipstring):
-	if (ipstring == "" or ipstring == " " or ipstring == "\n" or ipstring == "\r" or ipstring == None or len(ipstring) <= 3):
+	if (ipstring == "" or ipstring == " " or ipstring == "\n" or ipstring == "\r" or ipstring == None or len(ipstring) <= 3 or len(ipstring) > 15):
 		return True
 	else:
 		return False

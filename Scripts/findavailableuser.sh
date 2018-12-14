@@ -7,7 +7,7 @@ ram=$(( $1 * 1048/1000 ))
 for i in "${IPs[@]}"
 do
     val=$(sshpass -p 'asdf' ssh -q -t disa_server@"$i" 'bash $HOME/checkfree.sh' $ram)
-    compare=$( echo $'1\r' )
+    compare=$( echo $'0\r' )
     if [ "$val" == "$compare" ]; then
     echo "FOUND $i"; exit 0
     # exit the script, return the ip
